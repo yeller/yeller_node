@@ -43,7 +43,7 @@ YellerClient.prototype.rotateEndpoint = function () {
   this.endpoints.push(lastEndpoint);
 };
 
-YellerClient.prototype.reportAndHandleRetries = function (error, currentRequestCount, callback) {
+YellerClient.prototype.reportAndHandleRetries = function (error, options, currentRequestCount, callback) {
   var that = this;
 
   var yellerCallback = function (res) {
@@ -51,12 +51,12 @@ YellerClient.prototype.reportAndHandleRetries = function (error, currentRequestC
     if (res.statusCode === 200) {
       callback();
     } else if (currentRequestCount < that.maxRetryCount)  {
-      that.reportAndHandleRetries(error, currentRequestCount + 1, callback);
+      that.reportAndHandleRetries(error, options, currentRequestCount + 1, callback);
     } else {
       callback(res);
     }
   };
-  var json = JSON.stringify(formatError(error));
+  var json = JSON.stringify(formatError(error, options));
   var req = https.request({
     host: this.endpoints[0],
     path: '/' + this.token,
@@ -71,8 +71,9 @@ YellerClient.prototype.reportAndHandleRetries = function (error, currentRequestC
   req.end();
 };
 
-YellerClient.prototype.report = function(error, callback) {
-  this.reportAndHandleRetries(error, 1, callback);
+YellerClient.prototype.report = function(error, opts, callback) {
+  var options = opts || options;
+  this.reportAndHandleRetries(error, options, 1, callback);
 };
 
 var client = function(opts) {

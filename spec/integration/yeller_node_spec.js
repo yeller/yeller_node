@@ -15,7 +15,7 @@ describe('yeller', function () {
     try {
       throw new Error('test error');
     } catch (e) {
-      client.report(e, function () {
+      client.report(e, {}, function () {
         api.done();
         done();
       });
@@ -34,9 +34,9 @@ describe('yeller', function () {
     try {
       throw new Error('test error');
     } catch (e) {
-      client.report(e, function () {
+      client.report(e, {}, function () {
         api1.done();
-        client.report(e, function () {
+        client.report(e, {}, function () {
           api2.done();
           done();
         });
@@ -56,7 +56,7 @@ describe('yeller', function () {
     try {
       throw new Error('test error');
     } catch (e) {
-      client.report(e, function () {
+      client.report(e, {}, function () {
         api1.done();
         api2.done();
         done();
@@ -85,7 +85,7 @@ describe('yeller', function () {
     try {
       throw new Error('test error');
     } catch (e) {
-      client.report(e, function () {
+      client.report(e, {}, function () {
         api1.done();
         api2.done();
         api3.done();
@@ -111,7 +111,7 @@ describe('yeller', function () {
     try {
       throw new Error('test error');
     } catch (e) {
-      client.report(e, function () {
+      client.report(e, {}, function () {
         api1.done();
         api2.done();
         done();
