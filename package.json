@@ -10,5 +10,9 @@
     "error_handling"
   ],
   "author": "Tom Crayford <tcrayford@yellerapp.com> (http://yellerapp.com/)",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "jasmine-node": "^1.14.5",
+    "nock": "^0.51.0"
+  }
 }
