@@ -23,7 +23,7 @@ describe("error_formatter", function () {
   });
 
   it("passes along custom data", function () {
-    var formatted = yeller.formatError(err, {custom_data: {user_id : 1}});
+    var formatted = yeller.formatError(err, {customData: {user_id : 1}});
     expect(formatted['custom-data']).toEqual({user_id: 1});
   });
 

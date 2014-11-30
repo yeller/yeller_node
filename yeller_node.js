@@ -18,7 +18,7 @@ var formatError = function (e, options) {
       stacktrace: formatFrames(stacktrace),
       type: e.name || 'Error',
       message: e.message,
-      'custom-data': opts.custom_data,
+      'custom-data': opts.customData,
       url: opts.url,
       location: opts.location,
       host: opts.host,
@@ -39,8 +39,8 @@ var YellerClient = function (options) {
   this.token = options.token;
   this.endpoints = options.endpoints;
   this.maxRetryCount = this.endpoints.length * 2;
-  this.startup_options = {
-    application_environment: options.application_environment,
+  this.startupOptions = {
+    applicationEnvironment: options.applicationEnvironment,
     host: options.host,
   };
 };
@@ -52,8 +52,8 @@ YellerClient.prototype.rotateEndpoint = function () {
 
 YellerClient.prototype.formatJSONError = function (error, options) {
   var formatted = formatError(error, options);
-  formatted['application-environment'] = this.startup_options.application_environment;
-  formatted.host = this.startup_options.host;
+  formatted['application-environment'] = this.startupOptions.applicationEnvironment;
+  formatted.host = this.startupOptions.host;
   formatted['client-version'] = VERSION;
   return JSON.stringify(formatted);
 };
@@ -96,8 +96,8 @@ var client = function(opts) {
   if (!opts.endpoints) {
     opts.endpoints = DEFAULT_ENDPOINTS.slice(0);
   }
-  if (!opts.application_environment) {
-    opts.application_environment = 'production';
+  if (!opts.applicationEnvironment) {
+    opts.applicationEnvironment = 'production';
   }
   if (!opts.host) {
     opts.host = os.hostname();
