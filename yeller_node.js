@@ -33,6 +33,8 @@ var DEFAULT_ENDPOINTS = [
   'collector5.yellerapp.com',
 ];
 
+var VERSION = "yeller_node: 0.0.1";
+
 var YellerClient = function (options) {
   this.token = options.token;
   this.endpoints = options.endpoints;
@@ -52,6 +54,7 @@ YellerClient.prototype.formatJSONError = function (error, options) {
   var formatted = formatError(error, options);
   formatted['application-environment'] = this.startup_options.application_environment;
   formatted.host = this.startup_options.host;
+  formatted['client-version'] = VERSION;
   return JSON.stringify(formatted);
 };
 
