@@ -39,8 +39,6 @@ YellerClient.prototype.reportAndHandleRetries = function (error, currentRequestC
     method: 'POST'
   },
   yellerCallback);
-  // handle request errors
-  // handle request timeouts
   req.end();
 };
 
