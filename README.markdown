@@ -26,6 +26,35 @@ Here are the available options that you can pass to `report` to give additional 
 - `url` (http only): the url of the http request that caused this error
 - `customData`: this is an arbitrary JSON hash of any information you want to send along with the error. Typical suspects: http params, http session, current job params, data about the currently logged in user, etc
 
+Alongside options to report, you can pass some other options to `client`:
+
+- `applicationEnvironment`: a string that denotes what kind of environment the application is running in. This defaults to `production`, but you might want to change it to `staging`, `development`, or `test` etc
+- `host`: a string that denotes which server the error happened on. By default `yeller_node` reads this from `os.hostname`.
+
+## Error Handling
+
+`yeller_node` (like all other supported yeller clients) does smart retrying when nodes fail- so if one of yeller's backend servers is down, you won't lose errors.
+
+For detecting when an error happens whilst yeller is reporting an error, you
+can pass `errorHandler` to `client` like so:
+
+```javascript
+var errorHandler = {
+    ioError: function (err) {
+                console.log(err);
+            },
+    authError: function (err) {
+                console.log(err);
+            },
+};
+var yellerClient = client({
+  token: 'YOUR_API_TOKEN_HERE',
+  errorHandler: errorHandler
+});
+```
+
+This will log yeller errors to stdout. `ioError` happens when there's a failure talking to yeller's backend, `authError` happens when your yeller API token is invalid.
+
 ## Questions
 
 If you have any questions, feel free to shoot me an email, [tcrayford@yellerapp.com](mailto:tcrayford@yellerapp.com).
