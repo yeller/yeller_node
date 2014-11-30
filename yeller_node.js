@@ -6,7 +6,7 @@ var formatFrames = function (frames) {
   var result = [];
   for (var i in frames) {
     var frame = frames[i];
-    result.push([frame.file, frame.lineNumber + ':' + frame.columnNumber, frame.functionName]);
+    result.push([frame.fileName, frame.lineNumber + ':' + frame.columnNumber, frame.functionName]);
   }
   return result;
 };
