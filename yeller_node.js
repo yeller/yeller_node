@@ -39,6 +39,7 @@ var YellerClient = function (options) {
   this.token = options.token;
   this.endpoints = options.endpoints;
   this.maxRetryCount = this.endpoints.length * 2;
+  this.errorHandler = options.errorHandler;
   this.startupOptions = {
     applicationEnvironment: options.applicationEnvironment,
     host: options.host,
@@ -62,7 +63,8 @@ YellerClient.prototype.handleFailure = function (jsonError, currentRequestCount,
   if (currentRequestCount < this.maxRetryCount)  {
       this.reportAndHandleRetries(jsonError, currentRequestCount + 1, callback);
   } else {
-      callback(error);
+    this.errorHandler.ioError(error);
+    callback(error);
   }
 };
 
@@ -73,6 +75,8 @@ YellerClient.prototype.reportAndHandleRetries = function (jsonError, currentRequ
     that.rotateEndpoint();
     if (res.statusCode === 200) {
       callback();
+    } else if (res.statusCode >= 400 && res.statusCode <= 500) {
+      that.errorHandler.authError(res);
     } else {
       that.handleFailure(jsonError, currentRequestCount, callback, res);
     }
@@ -113,6 +117,16 @@ var client = function(opts) {
   }
   if (!opts.host) {
     opts.host = os.hostname();
+  }
+  if (!opts.errorHandler) {
+    opts.errorHandler = {
+      ioError: function (err) {
+                 console.log(err);
+               },
+      authError: function (err) {
+                 console.log(err);
+               },
+    };
   }
   return new YellerClient(opts);
 };
