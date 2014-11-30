@@ -63,8 +63,8 @@ YellerClient.prototype.handleFailure = function (jsonError, currentRequestCount,
   if (currentRequestCount < this.maxRetryCount)  {
       this.reportAndHandleRetries(jsonError, currentRequestCount + 1, callback);
   } else {
-    this.errorHandler.ioError(error);
     callback(error);
+    this.errorHandler.ioError(error);
   }
 };
 
@@ -75,8 +75,9 @@ YellerClient.prototype.reportAndHandleRetries = function (jsonError, currentRequ
     that.rotateEndpoint();
     if (res.statusCode === 200) {
       callback();
-    } else if (res.statusCode >= 400 && res.statusCode <= 500) {
+    } else if (res.statusCode >= 400 && res.statusCode < 500) {
       that.errorHandler.authError(res);
+      callback();
     } else {
       that.handleFailure(jsonError, currentRequestCount, callback, res);
     }

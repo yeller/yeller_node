@@ -1,17 +1,21 @@
-var yeller = require('../../yeller_node');
+var yeller = require('../../index');
 var nock = require('nock');
 
 describe('yeller', function () {
   afterEach(function () {
     nock.cleanAll();
   });
+  var ignoringErrorHandler = {
+      ioError: function (err) {},
+      authError: function (err) {},
+    };
 
   it("reports an error to yeller's api", function (done) {
     var api = nock('https://collector1.yellerapp.com')
                     .post('/API_TOKEN')
                     .reply(200, 'success');
     nock.disableNetConnect();
-    var client = yeller.client({token: 'API_TOKEN'});
+    var client = yeller.client({token: 'API_TOKEN', errorHandler: ignoringErrorHandler});
     try {
       throw new Error('test error');
     } catch (e) {
@@ -30,7 +34,7 @@ describe('yeller', function () {
                     .post('/API_TOKEN')
                     .reply(200, 'success');
     nock.disableNetConnect();
-    var client = yeller.client({token: 'API_TOKEN'});
+    var client = yeller.client({token: 'API_TOKEN', errorHandler: ignoringErrorHandler});
     try {
       throw new Error('test error');
     } catch (e) {
@@ -52,7 +56,7 @@ describe('yeller', function () {
                     .post('/API_TOKEN')
                     .reply(200, 'success');
     nock.disableNetConnect();
-    var client = yeller.client({token: 'API_TOKEN'});
+    var client = yeller.client({token: 'API_TOKEN', errorHandler: ignoringErrorHandler});
     try {
       throw new Error('test error');
     } catch (e) {
@@ -81,7 +85,7 @@ describe('yeller', function () {
                     .post('/API_TOKEN')
                     .reply(200, 'success');
     nock.disableNetConnect();
-    var client = yeller.client({token: 'API_TOKEN'});
+    var client = yeller.client({token: 'API_TOKEN', errorHandler: ignoringErrorHandler});
     try {
       throw new Error('test error');
     } catch (e) {
@@ -106,7 +110,8 @@ describe('yeller', function () {
     nock.disableNetConnect();
     var client = yeller.client({
         token: 'API_TOKEN',
-        endpoints: ['collector1.yellerapp.com']
+        endpoints: ['collector1.yellerapp.com'],
+        errorHandler: ignoringErrorHandler,
     });
     try {
       throw new Error('test error');

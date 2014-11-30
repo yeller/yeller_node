@@ -1,4 +1,4 @@
-var yeller = require('../../yeller_node');
+var yeller = require('../../index');
 
 describe("error_formatter", function () {
   var err;
