@@ -17,5 +17,10 @@
   },
   "dependencies": {
     "stack-trace": "0.0.9"
-  }
+  },
+  "repository" : {
+    "type": "git",
+    "url": "https://github.com/yeller/yeller_node.git"
+  },
+  "readme" : "README.markdown"
 }
