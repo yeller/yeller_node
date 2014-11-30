@@ -1,6 +1,7 @@
 var https = require('https');
 
 var YellerClient = function (token) {
+  this.token = token;
 };
 
 YellerClient.prototype.report = function(error, callback) {
@@ -9,7 +10,7 @@ YellerClient.prototype.report = function(error, callback) {
   };
   var req = https.request({
     host: 'collector1.yellerapp.com',
-    path: '/API_TOKEN',
+    path: '/' + this.token,
     method: 'POST'
   },
   yellerCallback);

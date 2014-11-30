@@ -12,12 +12,8 @@ describe('yeller', function () {
       throw new Error('test error');
     } catch (e) {
       client.report(e, function () {
-        try {
-          api.done();
-          done();
-        } catch (e) {
-          done(e);
-        }
+        api.done();
+        done();
       });
     }
   });
