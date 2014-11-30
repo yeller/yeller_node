@@ -32,9 +32,9 @@ var DEFAULT_ENDPOINTS = [
   'collector5.yellerapp.com',
 ];
 
-var YellerClient = function (token, endpoints) {
-  this.token = token;
-  this.endpoints = endpoints;
+var YellerClient = function (options) {
+  this.token = options.token;
+  this.endpoints = options.endpoints;
   this.maxRetryCount = this.endpoints.length * 2;
 };
 
@@ -76,8 +76,10 @@ YellerClient.prototype.report = function(error, callback) {
 };
 
 var client = function(opts) {
-  var endpoints = opts.endpoints || DEFAULT_ENDPOINTS.slice(0);
-  return new YellerClient(opts.token, endpoints);
+  if (!opts.endpoints) {
+      opts.endpoints = DEFAULT_ENDPOINTS.slice(0);
+  }
+  return new YellerClient(opts);
 };
 
 module.exports = {
