@@ -58,38 +58,50 @@ YellerClient.prototype.formatJSONError = function (error, options) {
   return JSON.stringify(formatted);
 };
 
-YellerClient.prototype.reportAndHandleRetries = function (error, options, currentRequestCount, callback) {
+YellerClient.prototype.handleFailure = function (jsonError, currentRequestCount, callback, error) {
+  if (currentRequestCount < this.maxRetryCount)  {
+      this.reportAndHandleRetries(jsonError, currentRequestCount + 1, callback);
+  } else {
+      callback(error);
+  }
+};
+
+YellerClient.prototype.reportAndHandleRetries = function (jsonError, currentRequestCount, callback) {
   var that = this;
 
   var yellerCallback = function (res) {
     that.rotateEndpoint();
     if (res.statusCode === 200) {
       callback();
-    } else if (currentRequestCount < that.maxRetryCount)  {
-      that.reportAndHandleRetries(error, options, currentRequestCount + 1, callback);
     } else {
-      callback(res);
+      that.handleFailure(jsonError, currentRequestCount, callback, res);
     }
   };
-  var json = that.formatJSONError(error, options);
   var req = https.request({
     host: this.endpoints[0],
     path: '/' + this.token,
     method: 'POST',
     headers: {
       'Content-Type' : 'application/json',
-      'Content-Length' : json.length
+      'Content-Length' : jsonError.length
     },
   },
   yellerCallback);
-  req.write(json);
+  req.write(jsonError);
+  req.setTimeout(1000, function (err) {
+    that.handleFailure(jsonError, currentRequestCount, callback, err);
+  });
+  req.on('error', function (err) {
+    that.handleFailure(jsonError, currentRequestCount, callback, err);
+  });
   req.end();
 };
 
 YellerClient.prototype.report = function(error, opts, call) {
   var options = opts || options;
   var callback = call || function() {};
-  this.reportAndHandleRetries(error, options, 1, callback);
+  var json = this.formatJSONError(error, options);
+  this.reportAndHandleRetries(json, 1, callback);
 };
 
 var client = function(opts) {
