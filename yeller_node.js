@@ -1,5 +1,6 @@
 var https = require('https');
 var stackTrace = require('stack-trace');
+var os = require('os');
 
 var formatFrames = function (frames) {
   var result = [];
@@ -36,11 +37,22 @@ var YellerClient = function (options) {
   this.token = options.token;
   this.endpoints = options.endpoints;
   this.maxRetryCount = this.endpoints.length * 2;
+  this.startup_options = {
+    application_environment: options.application_environment,
+    host: options.host,
+  };
 };
 
 YellerClient.prototype.rotateEndpoint = function () {
   var lastEndpoint = this.endpoints.shift();
   this.endpoints.push(lastEndpoint);
+};
+
+YellerClient.prototype.formatJSONError = function (error, options) {
+  var formatted = formatError(error, options);
+  formatted['application-environment'] = this.startup_options.application_environment;
+  formatted.host = this.startup_options.host;
+  return JSON.stringify(formatted);
 };
 
 YellerClient.prototype.reportAndHandleRetries = function (error, options, currentRequestCount, callback) {
@@ -56,7 +68,7 @@ YellerClient.prototype.reportAndHandleRetries = function (error, options, curren
       callback(res);
     }
   };
-  var json = JSON.stringify(formatError(error, options));
+  var json = that.formatJSONError(error, options);
   var req = https.request({
     host: this.endpoints[0],
     path: '/' + this.token,
@@ -78,7 +90,13 @@ YellerClient.prototype.report = function(error, opts, callback) {
 
 var client = function(opts) {
   if (!opts.endpoints) {
-      opts.endpoints = DEFAULT_ENDPOINTS.slice(0);
+    opts.endpoints = DEFAULT_ENDPOINTS.slice(0);
+  }
+  if (!opts.application_environment) {
+    opts.application_environment = 'production';
+  }
+  if (!opts.host) {
+    opts.host = os.hostname();
   }
   return new YellerClient(opts);
 };
