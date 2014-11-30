@@ -15,7 +15,7 @@ var formatError = function (e, options) {
   var stacktrace = stackTrace.parse(e);
   return {
       stacktrace: formatFrames(stacktrace),
-      type: 'Error',
+      type: e.name || 'Error',
       message: e.message,
       'custom-data': opts.custom_data,
       url: opts.url,
