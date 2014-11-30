@@ -1,6 +1,6 @@
 var https = require('https');
 
-var DEFAULT_CLIENTS = [
+var DEFAULT_ENDPOINTS = [
   'collector1.yellerapp.com',
   'collector2.yellerapp.com',
   'collector3.yellerapp.com',
@@ -9,22 +9,22 @@ var DEFAULT_CLIENTS = [
 ];
 
 
-var YellerClient = function (token, clients) {
+var YellerClient = function (token, endpoints) {
   this.token = token;
-  this.clients = clients;
-  this.maxRetryCount = this.clients.length * 2;
+  this.endpoints = endpoints;
+  this.maxRetryCount = this.endpoints.length * 2;
 };
 
-YellerClient.prototype.rotateClients = function () {
-  var lastClient = this.clients.shift();
-  this.clients.push(lastClient);
+YellerClient.prototype.rotateEndpoint = function () {
+  var lastEndpoint = this.endpoints.shift();
+  this.endpoints.push(lastEndpoint);
 };
 
 YellerClient.prototype.reportAndHandleRetries = function (error, currentRequestCount, callback) {
   var that = this;
 
   var yellerCallback = function (res) {
-    that.rotateClients();
+    that.rotateEndpoint();
     if (res.statusCode === 200) {
       callback();
     } else if (currentRequestCount < that.maxRetryCount)  {
@@ -34,7 +34,7 @@ YellerClient.prototype.reportAndHandleRetries = function (error, currentRequestC
     }
   };
   var req = https.request({
-    host: this.clients[0],
+    host: this.endpoints[0],
     path: '/' + this.token,
     method: 'POST'
   },
@@ -49,8 +49,8 @@ YellerClient.prototype.report = function(error, callback) {
 };
 
 var client = function(opts) {
-  var clients = opts.clients || DEFAULT_CLIENTS.slice(0);
-  return new YellerClient(opts.token, clients);
+  var endpoints = opts.endpoints || DEFAULT_ENDPOINTS.slice(0);
+  return new YellerClient(opts.token, endpoints);
 };
 
 module.exports = {

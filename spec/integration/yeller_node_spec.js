@@ -106,8 +106,7 @@ describe('yeller', function () {
     nock.disableNetConnect();
     var client = yeller.client({
         token: 'API_TOKEN',
-        //TODO: this shouldn't be called clients
-        clients: ['collector1.yellerapp.com']
+        endpoints: ['collector1.yellerapp.com']
     });
     try {
       throw new Error('test error');
