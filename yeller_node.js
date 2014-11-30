@@ -86,8 +86,9 @@ YellerClient.prototype.reportAndHandleRetries = function (error, options, curren
   req.end();
 };
 
-YellerClient.prototype.report = function(error, opts, callback) {
+YellerClient.prototype.report = function(error, opts, call) {
   var options = opts || options;
+  var callback = call || function() {};
   this.reportAndHandleRetries(error, options, 1, callback);
 };
 
