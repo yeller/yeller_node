@@ -44,6 +44,7 @@ var YellerClient = function (options) {
     applicationEnvironment: options.applicationEnvironment,
     host: options.host,
   };
+  this.developmentEnvironments = options.developmentEnvironments;
 };
 
 YellerClient.prototype.rotateEndpoint = function () {
@@ -109,6 +110,13 @@ YellerClient.prototype.report = function(error, opts, call) {
   this.reportAndHandleRetries(json, 1, callback);
 };
 
+var YellerIgnoringClient = function () {
+};
+
+YellerIgnoringClient.prototype.report = function (e, opts, callback) {
+  callback();
+};
+
 var client = function(opts) {
   if (!opts.endpoints) {
     opts.endpoints = DEFAULT_ENDPOINTS.slice(0);
@@ -128,6 +136,15 @@ var client = function(opts) {
                  console.log(err);
                },
     };
+  }
+  if (!opts.developmentEnvironments) {
+    opts.developmentEnvironments = ['development', 'test'];
+  }
+  for (var i in opts.developmentEnvironments) {
+    var env = opts.developmentEnvironments[i];
+    if (env === opts.applicationEnvironment) {
+      return new YellerIgnoringClient();
+    }
   }
   return new YellerClient(opts);
 };

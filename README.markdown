@@ -29,6 +29,7 @@ Here are the available options that you can pass to `report` to give additional 
 Alongside options to report, you can pass some other options to `client`:
 
 - `applicationEnvironment`: a string that denotes what kind of environment the application is running in. This defaults to `production`, but you might want to change it to `staging`, `development`, or `test` etc
+- `developmentEnvironments`: an array of environments in which yeller should ignore errors. This lets you use yeller in your production code without it reporting errors when your tests fail etc.
 - `host`: a string that denotes which server the error happened on. By default `yeller_node` reads this from `os.hostname`.
 
 ## Error Handling

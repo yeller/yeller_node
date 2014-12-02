@@ -123,4 +123,15 @@ describe('yeller', function () {
       });
     }
   });
+
+  it("doesn't report errors from development environments", function (done) {
+    var client = yeller.client({token: 'API_TOKEN', errorHandler: ignoringErrorHandler, applicationEnvironment: 'development'});
+    try {
+      throw new Error('test error');
+    } catch (e) {
+      client.report(e, {}, function () {
+        done();
+      });
+    }
+  });
 });
