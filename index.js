@@ -2,20 +2,24 @@ var https = require('https');
 var stackTrace = require('stack-trace');
 var os = require('os');
 
-var formatFrames = function (frames) {
+var formatFrames = function (frames, project_root) {
   var result = [];
   for (var i in frames) {
     var frame = frames[i];
-    result.push([frame.fileName, frame.lineNumber + ':' + frame.columnNumber, frame.functionName]);
+    if (project_root && frame.fileName.lastIndexOf(project_root, 0) === 0 && frame.fileName.indexOf("node_modules") === -1) {
+      result.push([frame.fileName, frame.lineNumber + ':' + frame.columnNumber, frame.functionName, {"in-app" : true}]);
+    } else {
+      result.push([frame.fileName, frame.lineNumber + ':' + frame.columnNumber, frame.functionName]);
+    }
   }
   return result;
 };
 
-var formatError = function (e, options) {
+var formatError = function (e, options, project_root) {
   var opts = options || {};
   var stacktrace = stackTrace.parse(e);
   return {
-      stacktrace: formatFrames(stacktrace),
+      stacktrace: formatFrames(stacktrace, project_root),
       type: e.name || 'Error',
       message: e.message,
       'custom-data': opts.customData,
@@ -45,6 +49,7 @@ var YellerClient = function (options) {
     host: options.host,
   };
   this.developmentEnvironments = options.developmentEnvironments;
+  this.project_root = options.project_root || process.cwd();
 };
 
 YellerClient.prototype.rotateEndpoint = function () {
@@ -53,7 +58,7 @@ YellerClient.prototype.rotateEndpoint = function () {
 };
 
 YellerClient.prototype.formatJSONError = function (error, options) {
-  var formatted = formatError(error, options);
+  var formatted = formatError(error, options, this.project_root);
   formatted['application-environment'] = this.startupOptions.applicationEnvironment;
   formatted.host = this.startupOptions.host;
   formatted['client-version'] = VERSION;
@@ -151,5 +156,6 @@ var client = function(opts) {
 
 module.exports = {
   client: client,
-  formatError: formatError
+  formatError: formatError,
+  formatFrames: formatFrames,
 };
