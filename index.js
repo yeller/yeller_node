@@ -136,9 +136,11 @@ var client = function(opts) {
     opts.errorHandler = {
       ioError: function (err) {
                  console.log(err);
+                 console.log(err.stack);
                },
       authError: function (err) {
                  console.log(err);
+                 console.log(err.stack);
                },
     };
   }
