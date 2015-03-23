@@ -37,7 +37,7 @@ var DEFAULT_ENDPOINTS = [
   'collector5.yellerapp.com',
 ];
 
-var VERSION = "yeller_node: 0.0.1";
+var VERSION = "yeller_node: 0.0.5";
 
 var YellerClient = function (options) {
   this.token = options.token;
@@ -123,7 +123,9 @@ var YellerIgnoringClient = function () {
 };
 
 YellerIgnoringClient.prototype.report = function (e, opts, callback) {
-  callback();
+  if (typeof callback === 'function') {
+    callback();
+  }
 };
 
 var client = function(opts) {
@@ -139,11 +141,11 @@ var client = function(opts) {
   if (!opts.errorHandler) {
     opts.errorHandler = {
       ioError: function (err) {
-                 console.log(err);
+                 console.log("Yeller encountered an IO error: ", err);
                  console.log(err.stack);
                },
       authError: function (err) {
-                 console.log(err);
+                 console.log("Yeller encountered an Authorization error: ", err, " please check your api key is valid and that you've got an active Yeller account");
                  console.log(err.stack);
                },
     };
