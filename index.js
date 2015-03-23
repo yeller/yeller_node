@@ -99,7 +99,7 @@ YellerClient.prototype.reportAndHandleRetries = function (jsonError, currentRequ
   },
   yellerCallback);
   req.write(jsonError);
-  req.setTimeout(1000, function (err) {
+  req.setTimeout(10000, function (err) {
     that.handleFailure(jsonError, currentRequestCount, callback, err);
   });
   req.on('error', function (err) {
