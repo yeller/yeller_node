@@ -100,7 +100,11 @@ YellerClient.prototype.reportAndHandleRetries = function (jsonError, currentRequ
   yellerCallback);
   req.write(jsonError);
   req.setTimeout(10000, function (err) {
-    that.handleFailure(jsonError, currentRequestCount, callback, err);
+    if (err === undefined) {
+      that.handleFailure(jsonError, currentRequestCount, callback, new Error('Yeller: timed out sending the error to servers'));
+    } else {
+      that.handleFailure(jsonError, currentRequestCount, callback, err);
+    }
   });
   req.on('error', function (err) {
     that.handleFailure(jsonError, currentRequestCount, callback, err);
