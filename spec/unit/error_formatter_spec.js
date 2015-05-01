@@ -63,5 +63,15 @@ describe("error_formatter", function () {
         var formatted = yeller.formatFrames([{fileName: "/app/app.js"}], null);
         expect(formatted[0][3]).toEqual(undefined);
     });
+
+    it("doesn't throw on nil frames", function () {
+      var frames = [{
+        fileName: null,
+        lineNumber: null,
+        functionName: null
+      }];
+      var formatted = yeller.formatFrames(frames, "root");
+      expect(formatted[0][0]).toEqual(null);
+    });
   });
 });

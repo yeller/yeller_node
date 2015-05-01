@@ -6,7 +6,7 @@ var formatFrames = function (frames, project_root) {
   var result = [];
   for (var i in frames) {
     var frame = frames[i];
-    if (project_root && frame.fileName.lastIndexOf(project_root, 0) === 0 && frame.fileName.indexOf("node_modules") === -1) {
+    if (project_root && frame.fileName && frame.fileName.lastIndexOf(project_root, 0) === 0 && frame.fileName.indexOf("node_modules") === -1) {
       result.push([frame.fileName, frame.lineNumber + ':' + frame.columnNumber, frame.functionName, {"in-app" : true}]);
     } else {
       result.push([frame.fileName, frame.lineNumber + ':' + frame.columnNumber, frame.functionName]);
