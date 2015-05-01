@@ -37,7 +37,7 @@ var DEFAULT_ENDPOINTS = [
   'collector5.yellerapp.com',
 ];
 
-var VERSION = "yeller_node: 0.0.5";
+var VERSION = "yeller_node: 0.0.7";
 
 var YellerClient = function (options) {
   this.token = options.token;
