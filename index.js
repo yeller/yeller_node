@@ -2,6 +2,8 @@ var https = require('https');
 var stackTrace = require('stack-trace');
 var os = require('os');
 
+var pkg = require('./package')
+
 var formatFrames = function (frames, project_root) {
   var result = [];
   for (var i in frames) {
@@ -37,7 +39,7 @@ var DEFAULT_ENDPOINTS = [
   'collector5.yellerapp.com',
 ];
 
-var VERSION = "yeller_node: 0.0.7";
+var VERSION = "yeller_node: " + pkg.version;
 
 var YellerClient = function (options) {
   this.token = options.token;
